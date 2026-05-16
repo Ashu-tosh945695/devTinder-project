@@ -1,33 +1,21 @@
 const express = require("express")
 const app = express();
+const {AuthUser,DeleteUser} = require("./middlewares/auth")
 
+app.use("/admin",AuthUser);
+app.use("/admin",DeleteUser);
 
-
-
-app.use(
-  "/user",[
-  (req, res, next) => {
-    console.log("Route handler one");
-    next();
-    // res.send("Response 1")
-  },
-  (req, res, next) => {
-    console.log("Route handler 2");
-    // res.send("resnponse 2")
-    next();
-  },
-  (req, res, next) => {
+app.get("/admin/getAllData", (req, res,next) => {
     console.log("Route handler 3");
-    // res.send("resnponse 3")
-    next();
-  },
-  (req, res, next) => {
-    console.log("Route handler 3");
-    res.send("resnponse 4")
+    res.send("data sent successfully");
 
-  },
-  ]
+  }
 );
+
+app.get("/admin/AllDataDelete", (req, res, next) => {
+  console.log("Route handler 3");
+  res.send("data deleted successfully");
+});
 
 
 app.listen(3000, ()=>{
