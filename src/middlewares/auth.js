@@ -1,27 +1,26 @@
-const AuthUser = (req, res, next) => {
-  console.log("check the authentication");
-  const token = "xyz";
-  const isAuthorized = token === "xyz";
-  if (isAuthorized) {
-    // res.send("data sent successfully");
-    next();
-  } else {
-    res.send("user is unAuthorized");
-  }
-};
+const jwt = require("jsonwebtoken")
+const User = require("../models/user")
 
-const DeleteUser = (req,res,next)=>{
-      console.log("check the deleteData");
-    const token = "xyzhh";
-    const isAuthorized = token === "xyz";
-    if(isAuthorized){
-        next();
+const userAuth = async (req,res,next)=>{
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("Token is not valid");
     }
-    else{
-         res.send("user is unAuthorized");
+
+    const decodedObj = await jwt.verify(token, "Dev@Tinder123");
+    const { _id } = decodedObj;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("user does not found");
     }
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(400).send("ERROR:" + err.message);
+  }
+
 }
 module.exports = {
-    AuthUser,
-    DeleteUser
+   userAuth
 }
