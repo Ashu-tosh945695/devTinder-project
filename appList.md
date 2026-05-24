@@ -10,11 +10,14 @@
 - PATCH /profile/password'
 
 ## connectionRequestRouter
-- post /request/send/interested/:userId
-- post /request/send/ignored/:userId
-- Post /request/review/accepted/:requestId
-- Post /request/review/rejected/:requestId
+- post /request/send/:status/:userId
+<!-- - post /request/send/interested/:userId -->
+<!-- - post /request/send/ignored/:userId -->
 
+- post /request/review/:status/:requestId
+<!-- - Post /request/review/accepted/:requestId -->
+<!-- - Post /request/review/rejected/:requestId -->
+ 
 ## useRouter
 - GET /user/connections
 - Get /user/requests/received
