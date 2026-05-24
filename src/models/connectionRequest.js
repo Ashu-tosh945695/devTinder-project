@@ -16,7 +16,7 @@ const connectionRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["ignore", "interested", "accepted", "rejected"],
+        values: ["ignored", "interested", "accepted", "rejected"],
         message: `{VALUE} is incorrect status type`,
       },
     },
@@ -29,16 +29,23 @@ const connectionRequestSchema = new mongoose.Schema(
 // compound indexes
 connectionRequestSchema.index({fromUserId :1, toUserId :1})
 
-  connectionRequestSchema.pre("save", function (next) {
-    const ConnectionRequest = this;
-    //  check if the fromuserId same as touserId
+  // connectionRequestSchema.pre("save", function (next) {
+  //   const ConnectionRequest = this;
+  //   //  check if the fromuserId same as touserId
 
-    if (ConnectionRequest.fromUserId.equals(ConnectionRequest.toUserId)) {
-      throw new Error("can not sent connection request to your self");
-    }
-    next();
-  }),
+  //   if (ConnectionRequest.fromUserId.equals(ConnectionRequest.toUserId)) {
+  //     throw new Error("can not sent connection request to your self");
+  //   }
+  //   next();
+  // }),
 
+
+//  connectionRequestSchema.pre("save", function (next) {
+//    if (this.fromUserId.equals(this.toUserId)) {
+//      return next(new Error("Cannot send connection request to yourself"));
+//    }
+//    next();
+//  });
 
 ConnectionRequestModel = new mongoose.model("ConnectionRequest",connectionRequestSchema)
 

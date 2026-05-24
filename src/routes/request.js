@@ -14,7 +14,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
     if(!allowedStatus.includes(status)){
       return res.status(400).json(
         {
-          message: "Invalid status type:"+ status
+          message: "Inval `id status type:"+ status
         }
       )
     }
@@ -42,7 +42,12 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
       toUserId,
       status,
     })
-    const data = await connectionRequest.save()
+
+    console.log("Before save");
+
+    const data = await connectionRequest.save();
+
+    console.log("After save");
     res.json({
       message: req.user.firstName + "is"+ status + "is" + toUser.firstName,
       data,
@@ -54,43 +59,93 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
  
 });
 
-requestRouter.post("/request/review/:status/:requestId", userAuth, async (req,res)=>{
-  try {
-    const loggedInUser = req.user;
-    const {status,requestId} = req.params;
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { status, requestId } = req.params;
 
-    const allowedStatus = ["accepted", "rejected"];
-    if(!allowedStatus.includes(status)){
-      return res.status(400).json({
-        message: "Status not allowed"
-      })
+      const allowedStatus = ["accepted", "rejected"];
+
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({
+          message: "Status not allowed",
+        });
+      }
+
+      console.log("requestId:", requestId);
+      console.log("loggedInUser:", loggedInUser._id);
+      console.log("status:", status);
+
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      if (!connectionRequest) {
+        return res.status(404).json({
+          message: "Connection request not found",
+        });
+      }
+
+      connectionRequest.status = status;
+
+      const data = await connectionRequest.save();
+
+      return res.json({
+        message: `Connection Request ${status} successfully`,
+        
+        data,
+      });
+    } catch (err) {
+      console.error(err);
+
+      return res.status(500).json({
+        message: err.message,
+      });
     }
+  },
+);
+// requestRouter.post("/request/review/:status/:requestId", userAuth, async (req,res)=>{
+//   try {
+//     const loggedInUser = req.user;
+//     const {status,requestId} = req.params;
 
-    const connectionRequest = await ConnectionRequest.findOne({
-      _id: requestId,
-      toUserId: loggedInUser._id,
-      status: "interested",
-    })
+//     const allowedStatus = ["accepted", "rejected"];
+//     if(!allowedStatus.includes(status)){
+//       return res.status(400).json({
+//         message: "Status not allowed"
+//       })
+//     }
 
-    if(!connectionRequest){
-      return res.status(404).json({
-        message: "Connection request not found"
-      })
-    }
+//     const connectionRequest = await ConnectionRequest.findOne({
+//       _id: requestId,
+//       toUserId: loggedInUser._id,
+//       status: "interested",
+//     })
 
-    connectionRequest.status = status;
+//     if(!connectionRequest){
+//       return res.status(404).json({
+//         message: "Connection request not found"
+//       })
+//     }
 
-    const data = await connectionRequest.save()
-    res.json({message: "Connection Request" + status, data})
+//     connectionRequest.status = status;
 
-  } catch (err) {
-    res.status(404).send("ERROR: " + err.message);
-  }
-  console.log("requestId:", requestId);
-  console.log("loggedInUser:", loggedInUser._id);
-  console.log("status:", status);
+//     const data = await connectionRequest.save()
+//     res.json({message: "Connection Request" + status, data})
+
+//   } catch (err) {
+//     res.status(404).send("ERROR: " + err.message);
+//   }
+//   console.log("requestId:", requestId);
+//   console.log("loggedInUser:", loggedInUser._id);
+//   console.log("status:", status);
  
-})
+// })
 
 module.exports = requestRouter;
 
