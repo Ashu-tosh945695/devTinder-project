@@ -3,10 +3,14 @@ const app = express();
 const connectDB = require("./config/database")
 const jwt = require("jsonwebtoken"); 
 const cookieParser = require("cookie-parser")
+const cors = require("cors")
 
 
-
-
+app.use(cors({
+  origin: "http://localhost:5173",  //white listing the origin domain name
+  credentials: true,
+}
+))
 app.use(express.json())
 app.use(cookieParser())
 
