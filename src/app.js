@@ -6,11 +6,23 @@ const cookieParser = require("cookie-parser")
 const cors = require("cors")
 
 
-app.use(cors({
-  origin: "http://localhost:5173",  //white listing the origin domain name
-  credentials: true,
-}
-))
+app.use(
+  cors({
+    origin: "http://localhost:5173", //white listing the origin domain name
+    credentials: true,
+    // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  }),
+);
+
+// ✅ Fixed
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // ⚠️ Must be explicit, NOT '*'
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true, // ← This adds the missing header
+//   }),
+// );
 app.use(express.json())
 app.use(cookieParser())
 
@@ -24,78 +36,78 @@ app.use("/", profileRouter)
 app.use("/", requestRouter)
 app.use("/", userRouter);
 
-app.get("/user", async (req,res) =>{
-  const userEmail = req.body.emailId;
-  try{
-     const user = await User.findOne({ emailId: userEmail });
-     if(user.length ===0){
-        res.status(404).send("Something wen Wrong User not found");
-     }
-     else{
-       res.send(user);
-     }
-  }
-  catch{
-    res.status(404).send("Something wen Wrong")
-  }
-})
+// app.get("/user", async (req,res) =>{
+//   const userEmail = req.body.emailId;
+//   try{
+//      const user = await User.findOne({ emailId: userEmail });
+//      if(user.length ===0){
+//         res.status(404).send("Something wen Wrong User not found");
+//      }
+//      else{
+//        res.send(user);
+//      }
+//   }
+//   catch{
+//     res.status(404).send("Something wen Wrong")
+//   }
+// })
 
-app.get("/feed", async(req,res)=>{
-  try{
-  const users =  await User.find({})
-  res.send(users);
-  }
-   catch{
-    res.status(404).send("Something wen Wrong")
-  }
-})
+// app.get("/feed", async(req,res)=>{
+//   try{
+//   const users =  await User.find({})
+//   res.send(users);
+//   }
+//    catch{
+//     res.status(404).send("Something wen Wrong")
+//   }
+// })
 
 
-app.delete("/user", async(req,res)=>{
-   const userId = req.body.userId;
-   try{
-    const user =  await User.findByIdAndDelete(userId)
-   res.send("user deleted successfully")
-   }
-   catch{
-      res.status(404).send("Something wen Wrong");
-   }
+// app.delete("/user", async(req,res)=>{
+//    const userId = req.body.userId;
+//    try{
+//     const user =  await User.findByIdAndDelete(userId)
+//    res.send("user deleted successfully")
+//    }
+//    catch{
+//       res.status(404).send("Something wen Wrong");
+//    }
    
-})
+// })
 
 
-app.patch("/user/:userId",async (req,res)=>{
-  const userId = req.params.userId;
-  const data = req.body
+// app.patch("/user/:userId",async (req,res)=>{
+//   const userId = req.params.userId;
+//   const data = req.body
 
-  try {
-      const ALLOWED_UPDATES = [
-        "userId",
-        "photoUrl",
-        "about",
-        "gender",
-        "age",
-        "skills",
-      ];
-      const isUpdateAllowed = Object.keys(data).every((k) =>
-        ALLOWED_UPDATES.includes(k),
-      );
-      if (!isUpdateAllowed) {
-          throw new Error("Update not allowed")
-      }
-      if(data?.skills.length>10){
-        throw new Error("skiils can not be more than 10")
-      }
-    const user = await User.findOneAndUpdate({ _id: userId }, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-    res.send("Updated succesffully");
-  } catch(err) {
-    res.status(404).send("UPDATE FAILED: Something wenT Wrong"+ err.message);
-  }
+//   try {
+//       const ALLOWED_UPDATES = [
+//         "userId",
+//         "photoUrl",
+//         "about",
+//         "gender",
+//         "age",
+//         "skills",
+//       ];
+//       const isUpdateAllowed = Object.keys(data).every((k) =>
+//         ALLOWED_UPDATES.includes(k),
+//       );
+//       if (!isUpdateAllowed) {
+//           throw new Error("Update not allowed")
+//       }
+//       if(data?.skills.length>10){
+//         throw new Error("skiils can not be more than 10")
+//       }
+//     const user = await User.findOneAndUpdate({ _id: userId }, data, {
+//       returnDocument: "after",
+//       runValidators: true,
+//     });
+//     res.send("Updated succesffully");
+//   } catch(err) {
+//     res.status(404).send("UPDATE FAILED: Something wenT Wrong"+ err.message);
+//   }
  
-})
+// })
 
 
 connectDB()
