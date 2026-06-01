@@ -4,16 +4,24 @@ const connectDB = require("./config/database")
 const jwt = require("jsonwebtoken"); 
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+require("dotenv").config();
 
+// require("./utils/cronjob")
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", //white listing the origin domain name
+//     credentials: true,
+//     // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//   }),
+// );
 
 app.use(
   cors({
-    origin: "http://localhost:5173", //white listing the origin domain name
+    origin: "http://localhost:5173",
     credentials: true,
-    // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
   }),
 );
-
 // ✅ Fixed
 // app.use(
 //   cors({
@@ -29,12 +37,14 @@ app.use(cookieParser())
 const authRouter = require("./routes/auth")
 const profileRouter = require('./routes/profile')
 const requestRouter = require("./routes/request")
-const userRouter = require("./routes/user")
+const userRouter = require("./routes/user");
+const paymentRouter = require("./routes/payment");
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
 app.use("/", requestRouter)
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 // app.get("/user", async (req,res) =>{
 //   const userEmail = req.body.emailId;
@@ -113,7 +123,7 @@ app.use("/", userRouter);
 connectDB()
   .then(() => {
     console.log("Database connected successfully");
-    app.listen(3000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("server is started");
     });
   })

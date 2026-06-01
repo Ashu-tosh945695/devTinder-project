@@ -14,11 +14,11 @@ const validateSignUpData = (req)=>{
 
 const validateEditProfileData = (req) => {
   const allowedEditFields = [
-    "FirstName",
+    "firstName",
     "lastName",
     "emailId",
     "gender",
-    "photoURL",
+    "photoUrl",
     "age",
     "skills",
     "about",
@@ -30,6 +30,7 @@ const validateEditProfileData = (req) => {
 
   return isEditAllowed;
 };
+
 module.exports = {validateSignUpData,
     validateEditProfileData,
 }
