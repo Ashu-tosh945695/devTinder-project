@@ -40,8 +40,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("fromUserId", "firstName lastName age skills gender")
       .populate("toUserId", "firstName lastName age skills gender");
 
-    console.log("Logged In User ID:", loggedInUser._id);
-    console.log("Connection Requests:", connectionRequests);
+    // console.log("Logged In User ID:", loggedInUser._id);
+    // console.log("Connection Requests:", connectionRequests);
 
     const data = connectionRequests.map((row) => {
       if (row.fromUserId._id.toString() === loggedInUser._id.toString()) {

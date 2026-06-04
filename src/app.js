@@ -4,6 +4,9 @@ const connectDB = require("./config/database")
 const jwt = require("jsonwebtoken"); 
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const http = require("http")
+const initializeSocket = require("./utils/socket")
+
 require("dotenv").config();
 
 // require("./utils/cronjob")
@@ -39,13 +42,15 @@ const profileRouter = require('./routes/profile')
 const requestRouter = require("./routes/request")
 const userRouter = require("./routes/user");
 const paymentRouter = require("./routes/payment");
+const chatRouter = require("./routes/chat");
+// const initializeSocket = require("./utils/socket");
 
 app.use("/", authRouter)
 app.use("/", profileRouter)
 app.use("/", requestRouter)
 app.use("/", userRouter);
 app.use("/", paymentRouter);
-
+app.use("/", chatRouter);
 // app.get("/user", async (req,res) =>{
 //   const userEmail = req.body.emailId;
 //   try{
@@ -119,11 +124,14 @@ app.use("/", paymentRouter);
  
 // })
 
+const server = http.createServer(app)
+
+initializeSocket(server)
 
 connectDB()
   .then(() => {
     console.log("Database connected successfully");
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log("server is started");
     });
   })
